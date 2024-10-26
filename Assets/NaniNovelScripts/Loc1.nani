@@ -1,0 +1,208 @@
+# Start
+@back Default
+@set PlayerName="Гравець"
+@input PlayerName Summary:"Вкажи своє ім'я"
+@set StartQuestStates="State1"
+@set ButtonActive="True"
+@stop
+Гравець: Називай мене {PlayerName}.
+@goto .State1Home
+
+
+# MapButtonShow
+@hidePrinter
+@choice handler:ButtonArea button:MapButtons/MapButton pos:900,-450 goto:.Map
+@stop
+
+; =============== Map ===============
+; =============== Map ===============
+; =============== Map ===============
+# Map
+@hide Jade
+@hide Maylo
+@back Map
+@hidePrinter
+@choice handler:ButtonArea button:MapButtons/MapHome pos:-300,-300 goto:.HomeScene
+@choice handler:ButtonArea button:MapButtons/MapCasino pos:300,-200 goto:.CasinoScene
+@choice handler:ButtonArea button:MapButtons/MapStar pos:300,200 goto:.StarScene if:ButtonActive="True"
+@choice handler:ButtonArea button:MapButtons/MapStar pos:300,200 goto:.Map if:ButtonActive="False"
+
+@stop
+
+
+; =============== HomeScene ===============
+; =============== HomeScene ===============
+; =============== HomeScene ===============
+# HomeScene
+@back Home
+@goto .State1Home if:StartQuestStates="State1"
+@goto .State2Home if:StartQuestStates="State2"
+@goto .State3Home if:StartQuestStates="State3"
+@goto .State3Home if:StartQuestStates="State4"
+@goto .State5Home if:StartQuestStates="State5"
+@goto .CompletedVersionJade
+; При 4 стейті відправляємо в казино, для діалогу самим з собою
+
+# State1Home
+@char Jade
+Джейд: Привіт! Ти новенький в місті, так? 
+Джейд: Ну, раз тебе сюди занесло, буде робота для тебе. Я маю інформацію, але мені потрібен артефакт з казино.
+Джейд: Цей шматок коду може зламати будь-який банк. Забереш його для мене?
+{PlayerName}: З чого мені тобі довіряти?
+Джейд: Довіра — це дорога забавка. Але я знаю, що ти тут не з доброї волі, так що вибір простий. 
+Джейд: Йди до Майло у казино, він розкаже, що робити далі. 
+@set StartQuestStates="State2"
+@goto .MapButtonShow
+
+# State2Home
+@char Jade
+Джейд: Йди до Майло у казино, він розкаже, що робити далі.
+@hidePrinter
+@goto .MapButtonShow
+
+# State3Home
+@char Jade
+Джейд: Якщо ти не знаєш, що робити, йди до Майло у казино.
+@hidePrinter
+@goto .MapButtonShow
+
+# State5Home
+@char Jade
+@char Maylo
+Джейд: Отже, ти дістав артефакт. Чудово. Віддай його мені.
+Майло: Ні-ні, цей шматок — для мене. Я привів тебе сюди, а значить, він мій.
+Джейд: Ти працював на мене, забув?
+Майло: Тільки тому, що не знав, на що ти здатен. Давай, вирішуй, кому віддати.
+Кому віддати артефакт?
+@choice "Віддати Джейду" goto:.ChoiceVersion1
+@choice "Віддати Майло" goto:.ChoiceVersion2
+@choice "Залишити собі" goto:.ChoiceVersion3
+@stop
+@goto .Map
+
+; =============== ChoiceVersions ===============
+; =============== ChoiceVersions ===============
+; =============== ChoiceVersions ===============
+
+# ChoiceVersion1
+Джейд: Правильний вибір. Не хвилюйся, я в боргу перед тобою.
+Майло: Я більше не буду тобі довіряти.
+@set StartQuestStates="CompletedVersion1"
+@goto .MapButtonShow
+
+# ChoiceVersion2
+Джейд: Ти наробив серйозних помилок.
+Майло: Добре. Не думав, що ти такий кмітливий.
+@set StartQuestStates="CompletedVersion2"
+@goto .MapButtonShow
+
+# ChoiceVersion3
+Джейд: Ти ще пожалкуєш про це, малий.
+Майло: Ти нарвався на проблеми, друже.
+@set StartQuestStates="CompletedVersion3"
+@goto .MapButtonShow
+
+; =============== CompletedVersion ===============
+# CompletedVersionJade
+@char Jade
+@if StartQuestStates="CompletedVersion1"
+    Джейд: Правильний вибір. Не хвилюйся, я в боргу перед тобою.
+@else
+    Джейд: Чому ти не віддав мені артефакт?
+@endif
+@goto .MapButtonShow
+
+
+
+; =============== CasinoScene ===============
+; =============== CasinoScene ===============
+; =============== CasinoScene ===============
+
+# CasinoScene
+@back Casino
+@goto .State1Casino if:StartQuestStates="State1"
+@goto .State2Casino if:StartQuestStates="State2"
+@goto .State3Casino if:StartQuestStates="State3"
+@goto .State4Casino if:StartQuestStates="State4"
+@goto .State4Casino if:StartQuestStates="State5"
+@goto .CompletedVersionMaylo
+
+# State1Casino
+@char Maylo
+Майло: Ты не маєш тут бути!
+@hidePrinter
+@goto .MapButtonShow
+
+# State2Casino
+@char Maylo
+Майло: Джейд послав тебе?
+{PlayerName}: Так.
+Майло: Хе, чувак знає, що хоче.
+Майло: Але без гри ти не отримаєш того, за чим прийшов. Зараз протестуємо твої навички.
+Майло: Гра проста: виграєш — я тобі допоможу, програєш — теж допоможу, але це буде болючіше для твого его.
+ПОЧАТОК ГРИ!
+@skip false
+@startMemoryGame
+Майло: Ось тобі фішка. З нею зможеш забрати артефакт на СКЛАДІ. 
+Майло: Не забудь — Джейд не єдиний, хто хоче цей шматок коду.
+@set StartQuestStates="State3"
+@hidePrinter
+@goto .MapButtonShow
+
+# State3Casino
+@char Maylo
+Майло: Йди на СКЛАД, я почекаю тут.
+@hidePrinter
+@goto .MapButtonShow
+
+# State4Casino
+{PlayerName}: Куди цей дід втік?
+{PlayerName}: Щось тут не так. Майло пішов, і тепер цей шматок коду — тільки моя проблема. 
+{PlayerName}: Мабуть, треба повернутись до Джейда.
+@set StartQuestStates="State5"
+@hidePrinter
+@goto .MapButtonShow
+
+; =============== CompletedVersion ===============
+# CompletedVersionMaylo
+@char Maylo
+@if StartQuestStates="CompletedVersion2"
+    Майло: Правильний вибір. Не хвилюйся, я в боргу перед тобою.
+@else
+    Майло: Йди звідси. Потрібно було мені віддати.
+@endif
+@goto .MapButtonShow
+
+
+
+
+; =============== StarScene ===============
+; =============== StarScene ===============
+; =============== StarScene ===============
+
+
+
+
+# StarScene
+@back Star
+@goto .State1Star if:StartQuestStates="State1"
+@goto .State2Star if:StartQuestStates="State2"
+@goto .State3Star if:StartQuestStates="State3"
+
+# State1Star
+{PlayerName}: Тут якийсь сейф. 
+@hidePrinter
+@goto .MapButtonShow
+
+# State2Star
+@goto .State1Star
+
+# State3Star
+{PlayerName}: Це артефакт, про який говорив Майло.
+{PlayerName}: Здається, треба використати цю фішку.
+Ти знайшов артефакт.
+@set StartQuestStates="State4"
+@set ButtonActive="False"
+@goto .MapButtonShow
+
+
